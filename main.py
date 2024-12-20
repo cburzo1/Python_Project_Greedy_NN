@@ -106,15 +106,23 @@ myHash.search(26).addr = "5383 S 900 East #104"
 
 loadDistanceTableCSV("DistanceTableCSV.csv")
 
-def getDistanceBetween2Cities(start, end):
-    if(start <= end):
-        return weight_arr2[end][start]
+def getDistanceBetweenAddr(PX, PY):
+    if PX >= PY:
+        return weight_arr2[PX][PY]
     else:
-        return 'ERROR::make sure start is less than or equal to end'
+        return weight_arr2[PY][PX]
 
-def getShrotestDistance(pX, pY):
-    print("This method will return the shortest distance between two addresses")
+def getShortestDistanceBetwenAddr(PX, PY):
+    if PX >= PY:
+        while PY <= PX:
+            print(f"Distance of {PY} to {PX}: ", getDistanceBetweenAddr(PX, PY))
+            PY += 1
+    else:
+        while PX <= PY:
+            print(f"Distance of {PX} to {PY}: ", getDistanceBetweenAddr(PY, PX))
+            PX += 1
 
+    print("General Distance: ", getDistanceBetweenAddr(PX, PY))
 
 def getTimeBetweenPXandPY(time_string, distanceFromPXtoPy):
     # print(time_string)
@@ -135,6 +143,13 @@ def getTimeBetweenPXandPY(time_string, distanceFromPXtoPy):
 
     return formatted_timedelta_current_time
 
+print("city_arr2:",city_arr2)
+print("weight_arr2", weight_arr2)
+
 #trk1 = getTruckRoute(truck(1, [16, 34, 15, 37, 14, 20, 40, 19, 31, 13, 29, 39, 5, 26], "At Hub", "At Hub", "08:00:00", "08:00:00", 0))
 #trk2 = getTruckRoute(truck(2, [38, 3, 30, 1, 25,6, 36, 18, 28, 32, 33, 35], "At Hub", "At Hub", "09:05:00", "09:05:00", 0))
 #trk1_2 = getTruckRoute(truck(1, [9, 2, 4, 7, 8, 10, 11, 12, 17, 21, 22, 23, 24, 27], "At Hub", "At Hub", trk1.time, trk1.time, 0))
+
+#print(getDistanceBetweenAddr(7, 1))
+
+getShortestDistanceBetwenAddr(1, 25)
