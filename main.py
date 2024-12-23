@@ -149,7 +149,7 @@ def getTimeBetweenPXandPY(time_string, distanceFromPXtoPy):
 print("city_arr2:",city_arr2)
 print("weight_arr2", weight_arr2)
 
-trk1 = truck(1, [1,2,3,4,5, 6, 7, 8, 9, 10, 11, 12, 13,14,15,16], "At Hub", "At Hub", "08:00:00", "08:00:00", 0)
+trk1 = truck(1, [1,2,3], "At Hub", "At Hub", "08:00:00", "08:00:00", 0)
 #trk2 = getTruckRoute(truck(2, [38, 3, 30, 1, 25,6, 36, 18, 28, 32, 33, 35], "At Hub", "At Hub", "09:05:00", "09:05:00", 0))
 #trk1_2 = getTruckRoute(truck(1, [9, 2, 4, 7, 8, 10, 11, 12, 17, 21, 22, 23, 24, 27], "At Hub", "At Hub", trk1.time, trk1.time, 0))
 
@@ -160,18 +160,21 @@ trk1 = truck(1, [1,2,3,4,5, 6, 7, 8, 9, 10, 11, 12, 13,14,15,16], "At Hub", "At 
 
 def deliverPackages(trk):
     nextAddr = minDistanceFrom(" HUB", trk.packageList)
+    #print("trkPackage status: ", trk.packageList[nextAddr[1]])
+    time = getTimeBetweenPXandPY(trk1.startingTime, nextAddr[2])
+    packageLookUp(trk.packageList[nextAddr[1]]).status[0] = "Delivered"
+    packageLookUp(trk.packageList[nextAddr[1]]).status[1] = str(time)
     trk.packageList = trk.packageList[0:nextAddr[1]] + trk.packageList[nextAddr[1] + 1:len(trk.packageList)]
     tot = nextAddr[2]
-    time = getTimeBetweenPXandPY(trk1.startingTime, nextAddr[2])
-    packageLookUp(trk.packageList[i]).status[0] = "Delivered"
-    packageLookUp(trk.packageList[i]).status[1] = str(currentTime)
-    print(nextAddr, trk1.packageList, time)
+    #print("NextAddr: ", nextAddr, trk1.packageList, time)
 
     while len(trk1.packageList) != 0:
         nextAddr = minDistanceFrom(nextAddr[0], trk.packageList)
+        time = getTimeBetweenPXandPY(time, nextAddr[2])
+        packageLookUp(trk.packageList[nextAddr[1]]).status[0] = "Delivered"
+        packageLookUp(trk.packageList[nextAddr[1]]).status[1] = str(time)
         trk1.packageList = trk.packageList[0:nextAddr[1]] + trk.packageList[nextAddr[1] + 1:len(trk.packageList)]
         tot += nextAddr[2]
-        time = getTimeBetweenPXandPY(time, nextAddr[2])
         print(nextAddr, trk1.packageList, time)
 
     print(tot, time)
@@ -179,3 +182,37 @@ def deliverPackages(trk):
 #getDistanceBetweenAddr(nextAddr[0], " HUB")
 
 deliverPackages(trk1)
+
+myInputTime = "09:00:00"
+
+#print("All Package Statuses at", myInputTime)
+for i in range(1, 41):
+    if packageLookUp(i).ID in trk1.packageList:
+        truck = "trk1"
+    #elif packageLookUp(i).ID in trk2.packageList:
+        #truck = "trk2"
+    #elif packageLookUp(i).ID in trk1_2.packageList:
+        #truck = "trk1_2"
+    else:
+        truck = "no truck has loaded the package yet"
+
+    #print(truck)
+
+    if myInputTime < packageLookUp(i).status[1]:
+        packageLookUp(i).status[0] = "En Route"
+
+    '''if myInputTime < trk2.startingTime and truck == "trk2":
+        packageLookUp(i).status[0] = "At Hub"
+
+    if myInputTime < trk1.time and truck == "trk1_2":
+        packageLookUp(i).status[0] = "At Hub"
+
+    if myInputTime >= "10:20:00":
+        packageLookUp(9).addr = "410 S State St"
+        packageLookUp(9).zipcode = "84111"'''
+
+    print("Package ID:", packageLookUp(i).ID,", ", packageLookUp(i).addr, ", ",packageLookUp(i).city, ", ",packageLookUp(i).zipcode, ", ",packageLookUp(i).deadline, ", ",packageLookUp(i).weight , " --- ", packageLookUp(i).status[0], " at ", packageLookUp(i).status[1] if packageLookUp(i).status[0] == "Delivered" else myInputTime)
+
+
+#for i in range(len(myHash.table)+1):
+    #print("Key: {} and Package: {}".format(i + 1, myHash.search(i + 1)))
