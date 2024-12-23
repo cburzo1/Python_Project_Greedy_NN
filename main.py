@@ -107,22 +107,25 @@ myHash.search(26).addr = "5383 S 900 East #104"
 loadDistanceTableCSV("DistanceTableCSV.csv")
 
 def getDistanceBetweenAddr(PX, PY):
-    if PX >= PY:
-        return weight_arr2[PX][PY]
+    if city_arr2.index(PX) >= city_arr2.index(PY):
+        return weight_arr2[city_arr2.index(PX)][city_arr2.index(PY)]
     else:
-        return weight_arr2[PY][PX]
+        return weight_arr2[city_arr2.index(PY)][city_arr2.index(PX)]
 
-def getShortestDistanceBetwenAddr(PX, PY):
-    if PX >= PY:
-        while PY <= PX:
-            print(f"Distance of {PY} to {PX}: ", getDistanceBetweenAddr(PX, PY))
-            PY += 1
-    else:
-        while PX <= PY:
-            print(f"Distance of {PX} to {PY}: ", getDistanceBetweenAddr(PY, PX))
-            PX += 1
+def minDistanceFrom(fromAddr, trkPkgs):
+    print(fromAddr)
+    min = 25.0
+    addrOfMin = ''
+    idx = 0
+    for i in range(0, len(trkPkgs)):
+        if float(getDistanceBetweenAddr(fromAddr, " "+packageLookUp(trkPkgs[i]).addr+"\n("+packageLookUp(trkPkgs[i]).zipcode+")")) < min:
+            min = float(getDistanceBetweenAddr(fromAddr, " "+packageLookUp(trkPkgs[i]).addr+"\n("+packageLookUp(trkPkgs[i]).zipcode+")"))
+            addrOfMin = " "+packageLookUp(trkPkgs[i]).addr+"\n("+packageLookUp(trkPkgs[i]).zipcode+")"
+            #print(addrOfMin, min, trkPkgs[i])
+            idx = i
 
-    print("General Distance: ", getDistanceBetweenAddr(PX, PY))
+    print(addrOfMin, idx, min)
+    return [addrOfMin, idx, min]
 
 def getTimeBetweenPXandPY(time_string, distanceFromPXtoPy):
     # print(time_string)
@@ -146,10 +149,33 @@ def getTimeBetweenPXandPY(time_string, distanceFromPXtoPy):
 print("city_arr2:",city_arr2)
 print("weight_arr2", weight_arr2)
 
-#trk1 = getTruckRoute(truck(1, [16, 34, 15, 37, 14, 20, 40, 19, 31, 13, 29, 39, 5, 26], "At Hub", "At Hub", "08:00:00", "08:00:00", 0))
+trk1 = truck(1, [1,2,3,4,5, 6, 7, 8, 9, 10, 11, 12, 13,14,15,16], "At Hub", "At Hub", "08:00:00", "08:00:00", 0)
 #trk2 = getTruckRoute(truck(2, [38, 3, 30, 1, 25,6, 36, 18, 28, 32, 33, 35], "At Hub", "At Hub", "09:05:00", "09:05:00", 0))
 #trk1_2 = getTruckRoute(truck(1, [9, 2, 4, 7, 8, 10, 11, 12, 17, 21, 22, 23, 24, 27], "At Hub", "At Hub", trk1.time, trk1.time, 0))
 
-#print(getDistanceBetweenAddr(7, 1))
+#print(getDistanceBetweenAddr(city_arr2[1], city_arr2[0]))
 
-getShortestDistanceBetwenAddr(1, 25)
+#print(trk1.packageList[0:2] + trk1.packageList[3:5])
+#print(trk1.packageList)
+
+def deliverPackages(trk):
+    nextAddr = minDistanceFrom(" HUB", trk.packageList)
+    trk.packageList = trk.packageList[0:nextAddr[1]] + trk.packageList[nextAddr[1] + 1:len(trk.packageList)]
+    tot = nextAddr[2]
+    time = getTimeBetweenPXandPY(trk1.startingTime, nextAddr[2])
+    packageLookUp(trk.packageList[i]).status[0] = "Delivered"
+    packageLookUp(trk.packageList[i]).status[1] = str(currentTime)
+    print(nextAddr, trk1.packageList, time)
+
+    while len(trk1.packageList) != 0:
+        nextAddr = minDistanceFrom(nextAddr[0], trk.packageList)
+        trk1.packageList = trk.packageList[0:nextAddr[1]] + trk.packageList[nextAddr[1] + 1:len(trk.packageList)]
+        tot += nextAddr[2]
+        time = getTimeBetweenPXandPY(time, nextAddr[2])
+        print(nextAddr, trk1.packageList, time)
+
+    print(tot, time)
+
+#getDistanceBetweenAddr(nextAddr[0], " HUB")
+
+deliverPackages(trk1)
