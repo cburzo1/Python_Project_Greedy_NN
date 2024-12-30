@@ -255,16 +255,23 @@ This function "pretty" prints the status for all packages at any given time inpu
 '''
 def printPackageStatusForAllPackages(myInputTime, printFlag):
     print("Package Status at", myInputTime)
+    if printFlag == 1:
+        print("Package ID, Truck, City, ZipCode, DeadLine, Weight(Kilo), Time, Status")
+    print("----------------------------------------------------------------------")
     '''
     This loop assigns flags to make it clear to the method, which package is in which truck
     '''
+
     for i in range(1, 41):
         if packageLookUp(i).ID in arr1Load:
             truk = "trk1"
+            tRoute = "Truck 1 for First Route"
         elif packageLookUp(i).ID in arr2Load:
             truk = "trk2"
+            tRoute = "Truck 2"
         elif packageLookUp(i).ID in arr1_2Load:
             truk = "trk1_2"
+            tRoute = "Truck 1 for Second Route"
         else:
             truk = "no truck has loaded the package yet"
 
@@ -286,7 +293,7 @@ def printPackageStatusForAllPackages(myInputTime, printFlag):
             packageLookUp(9).zipcode = "84111"
 
         if printFlag == 1:
-            print("Package ID:", packageLookUp(i).ID,", ", packageLookUp(i).addr, ", ",packageLookUp(i).city, ", ",
+            print("Package ID:", packageLookUp(i).ID,", on", tRoute, " --- ", packageLookUp(i).addr, ", ",packageLookUp(i).city, ", ",
                   packageLookUp(i).zipcode, ", ",packageLookUp(i).deadline, ", ",packageLookUp(i).weight , " --- ",
                   packageLookUp(i).status[0], " at ", packageLookUp(i).status[1]
                   if packageLookUp(i).status[0] == "Delivered" else myInputTime)
@@ -295,12 +302,22 @@ def printPackageStatusForAllPackages(myInputTime, printFlag):
 This function "pretty" prints a single package when given the inputs: id and time in the form 00:00:00
 '''
 def packageLookUpByIdForTime(id, myInputTime):
-    print("")
+    if packageLookUp(id).ID in arr1Load:
+        tRoute = "Truck 1 for First Route"
+    elif packageLookUp(id).ID in arr2Load:
+        tRoute = "Truck 2"
+    elif packageLookUp(id).ID in arr1_2Load:
+        tRoute = "Truck 1 for Second Route"
+    else:
+        truk = "no truck has loaded the package yet"
+
+    print("Package ID, Truck, City, ZipCode, DeadLine, Weight(Kilo), Status, Time")
+    print("----------------------------------------------------------------------")
     if myInputTime < packageLookUp(id).status[1]:
-        print(packageLookUp(id).ID, packageLookUp(id).addr, packageLookUp(id).city, packageLookUp(id).zipcode,
+        print(packageLookUp(id).ID, ", on", tRoute, " --- ", packageLookUp(id).addr, packageLookUp(id).city, packageLookUp(id).zipcode,
               packageLookUp(id).deadline, packageLookUp(id).weight, "---", packageLookUp(id).status[0], "at", myInputTime)
     else:
-        print(packageLookUp(id).ID, packageLookUp(id).addr, packageLookUp(id).city, packageLookUp(id).zipcode,
+        print(packageLookUp(id).ID, ", on", tRoute, " --- ", packageLookUp(id).addr, packageLookUp(id).city, packageLookUp(id).zipcode,
               packageLookUp(id).deadline, packageLookUp(id).weight, "---",packageLookUp(id).status[0], "at" ,packageLookUp(id).status[1])
 
 '''
